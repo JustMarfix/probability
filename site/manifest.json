@@ -1,0 +1,7 @@
+{
+  "editions": [
+    { "id": "prob-all", "label": "Цветной", "file": "prob-all.pdf" },
+    { "id": "prob-monochrome", "label": "Ч/Б", "file": "prob-monochrome.pdf" }
+  ],
+  "releaseUrl": "https://github.com/JustMarfix/probability/releases/latest"
+}

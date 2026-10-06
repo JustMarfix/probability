@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ru" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Семинары по ТВиМС</title>
+<meta name="description" content="Конспекты практикумов по теории вероятностей и математической статистике">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📘%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+<header class="bar">
+  <div class="bar-left">
+    <button id="tocToggle" class="icon" title="Оглавление (O)" aria-label="Оглавление" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    </button>
+    <h1>Семинары по&nbsp;ТВиМС</h1>
+    <a class="version" id="version" href="https://github.com/JustMarfix/probability/releases/latest" target="_blank" rel="noopener">…</a>
+  </div>
+
+  <div class="bar-mid">
+    <button id="prev" class="icon" title="Предыдущая страница (←)" aria-label="Предыдущая страница">
+      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <span class="pager">
+      <input id="pageInput" type="text" inputmode="numeric" value="1" aria-label="Номер страницы">
+      <span class="sep">/</span><span id="pageCount">?</span>
+    </span>
+    <button id="next" class="icon" title="Следующая страница (→)" aria-label="Следующая страница">
+      <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+    <span class="divider"></span>
+    <button id="back" class="icon" title="Назад по ссылке (Backspace)" aria-label="Назад по ссылке">
+      <svg viewBox="0 0 24 24"><path d="M9 14l-4-4 4-4"/><path d="M5 10h8a6 6 0 010 12h-3"/></svg>
+    </button>
+    <span class="divider"></span>
+    <button id="zoomOut" class="icon" title="Уменьшить (−)" aria-label="Уменьшить">
+      <svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+    </button>
+    <button id="zoomLevel" class="text-btn" title="Сбросить масштаб">100%</button>
+    <button id="zoomIn" class="icon" title="Увеличить (+)" aria-label="Увеличить">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </div>
+
+  <div class="bar-right">
+    <div class="segmented" id="editions" role="group" aria-label="Вариант конспекта"></div>
+    <a id="download" class="icon" download title="Скачать PDF" aria-label="Скачать PDF">
+      <svg viewBox="0 0 24 24"><path d="M12 4v10m0 0l-4-4m4 4l4-4M5 19h14"/></svg>
+    </a>
+    <button id="theme" class="icon" title="Тема" aria-label="Переключить тему">
+      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 109 9 7 7 0 01-9-9z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="body">
+  <aside id="sidebar" aria-label="Оглавление">
+    <nav id="toc"></nav>
+  </aside>
+  <div id="backdrop" hidden></div>
+
+  <main id="scroller">
+    <div id="pages"></div>
+    <div id="status" class="status"><div class="spinner"></div><p>Загружаем конспект…</p></div>
+  </main>
+</div>
+
+<script src="viewer.js" type="module"></script>
+</body>
+</html>
