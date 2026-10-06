@@ -13,6 +13,7 @@
   short-name: none,
   lector: none,
   info: none,
+  editor: none,
   document_body,
 ) = {
   set document(author: "Резниченко М. Д.", title: name)
@@ -103,6 +104,17 @@
           size: 20pt,
         )[
           Семинарист: #lector
+        ]
+      }
+      #if editor != none {
+        v(
+          5%,
+          weak: true
+        )
+        text(
+          size: 20pt,
+        )[
+          Автор конспектов: #editor
         ]
       }
     ]

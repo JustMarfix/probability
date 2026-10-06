@@ -2,10 +2,11 @@
 #import "config.typ"
 
 #show: notes.with(
-  name: "Конспекты семинаров по ТВиМС",
+  name: "Конспекты семинаров по ТВиМС (ИБ, 2 курс)",
   short-name: "Семинары по ТВиМС",
   lector: "Киндеркнехт Яна Анатольевна",
   info: "2026-2027",
+  editor: "Михаил Резниченко, БИБ252"
 )
 
 #include "sections/01-sigma/!sec.typ"
