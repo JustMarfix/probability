@@ -1,11 +1,12 @@
 #import "../../utils/core.typ": *
+#import "../../packages/cetz.typ": cetz, plot
 
 == Семинар
 
 #let nested-sets = {
-  let s = 0.03cm
-  let W = 235
-  let H = 170
+  let (W, H) = (235, 170)
+  // координаты заданы в сетке 235 x 170 с осью y вниз
+  let P(x, y) = (x / 33, (H - y) / 33)
   let ellipses = (
     (117, 90, 212, 150),
     (122, 86, 168, 124),
@@ -14,16 +15,14 @@
     (127, 73, 56, 48),
     (128, 69, 28, 24),
   )
-  box(width: (W + 25) * s, height: H * s, {
-    place(rect(width: W * s, height: H * s, stroke: black + 0.8pt))
+
+  cetz.canvas({
+    import cetz.draw: *
+    rect(P(0, 0), P(W, H), stroke: black + 0.8pt)
     for (cx, cy, w, h) in ellipses {
-      place(
-        dx: (cx - w / 2) * s,
-        dy: (cy - h / 2) * s,
-        ellipse(width: w * s, height: h * s, stroke: black + 0.6pt),
-      )
+      circle(P(cx, cy), radius: (w / 66, h / 66), stroke: black + 0.6pt)
     }
-    place(dx: (W + 5) * s, dy: (H - 22) * s, $bold(Omega)$)
+    content(P(W + 18, 22), $bold(Omega)$)
   })
 }
 
@@ -99,61 +98,40 @@
 ]
 
 #let dist-graph = {
-  let ux = 3.5cm
-  let uy = 4cm
-  let (x0, x1, y0, y1) = (-1.2, 2.1, -0.3, 1.3)
-  let P(x, y) = ((x - x0) * ux, (y1 - y) * uy)
+  let gr = if config.monochrome { black } else { red }
+  let guide = (paint: luma(60%), thickness: 0.5pt)
 
-  let seg(a, b, stroke: black + 0.8pt) = place(line(start: P(..a), end: P(..b), stroke: stroke))
-  let guide(a, b) = seg(a, b, stroke: gray + 0.5pt)
-  let graph(a, b) = seg(a, b, stroke: red + 1.5pt)
+  cetz.canvas({
+    import cetz.draw: *
+    plot.plot(
+      size: (7.5, 3.6),
+      axis-style: "school-book",
+      x-min: -1.2, x-max: 2.1,
+      y-min: -0.3, y-max: 1.3,
+      x-label: none, y-label: none,
+      x-tick-step: none, y-tick-step: none,
+      x-ticks: ((1/2, $1/2$), (1, $1$)),
+      y-ticks: ((2/5, $2/5$), (3/4, $3/4$), (1, $1$)),
+      {
+        plot.annotate({
+          line((0, 1), (1, 1), stroke: guide)
+          line((0, 3/4), (1/2, 3/4), stroke: guide)
+          line((1/2, 0), (1/2, 3/4), stroke: guide)
+          line((1, 0), (1, 1), stroke: guide)
+        }, background: true)
 
-  let dot(p, filled: true) = {
-    let (x, y) = P(..p)
-    let r = 0.09cm
-    place(dx: x - r, dy: y - r, circle(
-      radius: r,
-      fill: if filled { red } else { white },
-      stroke: red + 1pt,
-    ))
-  }
+        for part in (((-1.2, 0), (0, 0)), ((0, 2/5), (1/2, 2/5)), ((1/2, 3/4), (1, 1)), ((1, 1), (1.9, 1))) {
+          plot.add(part, style: (stroke: gr + 1.5pt))
+        }
 
-  let lbl(p, body, dx: 0cm, dy: 0cm) = {
-    let (x, y) = P(..p)
-    place(dx: x + dx - 1cm, dy: y + dy - 0.5cm,
-      box(width: 2cm, height: 1cm, align(center + horizon, body)))
-  }
+        plot.add(((0, 2/5), (1/2, 3/4)), style: (stroke: none),
+          mark: "o", mark-size: 0.12, mark-style: (fill: gr, stroke: none))
+        plot.add(((0, 0), (1/2, 2/5)), style: (stroke: none),
+          mark: "o", mark-size: 0.12, mark-style: (fill: white, stroke: gr + 1pt))
 
-  box(width: (x1 - x0) * ux, height: (y1 - y0) * uy, {
-    guide((0, 1), (1, 1))
-    guide((0, 3/4), (1/2, 3/4))
-    guide((1/2, 0), (1/2, 3/4))
-    guide((1, 0), (1, 1))
-
-    seg((x0, 0), (x1 - 0.05, 0))
-    seg((0, y0), (0, y1 - 0.05))
-    let (ax, ay) = P(x1 - 0.05, 0)
-    place(dx: ax - 8pt, dy: ay - 3pt, polygon(fill: black, (0pt, 0pt), (8pt, 3pt), (0pt, 6pt)))
-    let (bx, by) = P(0, y1 - 0.05)
-    place(dx: bx - 3pt, dy: by, polygon(fill: black, (0pt, 8pt), (3pt, 0pt), (6pt, 8pt)))
-
-    graph((x0, 0), (0, 0))
-    graph((0, 2/5), (1/2, 2/5))
-    graph((1/2, 3/4), (1, 1))
-    graph((1, 1), (1.9, 1))
-
-    dot((0, 0), filled: false)
-    dot((0, 2/5))
-    dot((1/2, 2/5), filled: false)
-    dot((1/2, 3/4))
-
-    lbl((0, 0), $0$, dx: -0.3cm, dy: 0.45cm)
-    lbl((1/2, 0), $1/2$, dy: 0.5cm)
-    lbl((1, 0), $1$, dy: 0.45cm)
-    lbl((0, 2/5), $2/5$, dx: -0.6cm)
-    lbl((0, 3/4), $3/4$, dx: -0.6cm)
-    lbl((0, 1), $1$, dx: -0.4cm)
-    lbl((1.8, 1), text(fill: red)[$F$], dy: -0.4cm)
+        plot.annotate(content((1.75, 1.13), text(fill: gr, $F$)))
+      },
+    )
   })
 }
 

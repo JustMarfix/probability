@@ -1,4 +1,5 @@
 #import "../../utils/core.typ": *
+#import "../../packages/cetz.typ": cetz, plot, chart
 
 == Задачи
 
@@ -72,22 +73,21 @@ $ hat(PP)(A) := n(A)/n $
 служит приближением (оценкой) неизвестной вероятности $PP(A)$. Точность такого приближения будет обсуждаться в модуле 3.
 
 #let unit-interval = {
-  let w = 9cm
-  let y = 0.4cm
-  let (pp, uu) = (0.65, 0.38)
+  let (w, pp, uu) = (9, 0.65, 0.38)
   let hot = if config.monochrome { luma(35%) } else { red }
-  let tick(x, body, color) = {
-    place(line(start: (w * x, y - 0.18cm), end: (w * x, y + 0.18cm), stroke: color + 1.4pt))
-    place(dx: w * x - 0.6cm, dy: y + 0.25cm, box(width: 1.2cm, align(center, text(fill: color, weight: "bold", body))))
-  }
-  box(width: w + 0.6cm, height: 1.6cm, inset: (top: 0.2cm, left: 0.3cm), {
-    place(line(start: (0cm, y), end: (w, y), stroke: 1pt))
-    place(line(start: (0cm, y), end: (w * pp, y), stroke: hot + 1.6pt))
-    tick(0, $0$, black)
-    tick(1, $1$, black)
-    tick(pp, $p$, hot)
-    place(dx: w * uu - 2.5pt, dy: y - 2.5pt, circle(radius: 2.5pt, fill: black))
-    place(dx: w * uu - 0.6cm, dy: y + 0.25cm, box(width: 1.2cm, align(center, text(weight: "bold", $u$))))
+
+  cetz.canvas({
+    import cetz.draw: *
+    line((0, 0), (w, 0), stroke: 1pt)
+    line((0, 0), (w * pp, 0), stroke: hot + 1.6pt)
+    for (x, label, color) in ((0, $0$, black), (uu, none, black), (pp, $p$, hot), (1, $1$, black)) {
+      if label != none {
+        line((w * x, -0.12), (w * x, 0.12), stroke: color + 1.4pt)
+        content((w * x, -0.45), text(fill: color, weight: "bold", label))
+      }
+    }
+    circle((w * uu, 0), radius: 0.08, fill: black, stroke: none)
+    content((w * uu, -0.45), text(weight: "bold", $u$))
   })
 }
 
@@ -178,42 +178,36 @@ $ mu^F ([0, p)) = integral_0^p f(x) dif x = integral_0^p dif x = p = PP(A). $
 ]
 
 #let circuit = {
-  let s = 0.02cm
   let st = if config.monochrome { luma(40%) + 0.8pt } else { blue.lighten(30%) + 0.8pt }
-  let seg(..pts) = {
-    let pts = pts.pos()
-    for i in range(pts.len() - 1) {
-      let (x1, y1) = pts.at(i)
-      let (x2, y2) = pts.at(i + 1)
-      place(line(start: (x1 * s, y1 * s), end: (x2 * s, y2 * s), stroke: st))
+  let (top, mid, bot) = (3.6, 2.4, 1.2)
+
+  cetz.canvas({
+    import cetz.draw: *
+    let unit(x, y, n) = {
+      rect((x - 0.44, y - 0.44), (x + 0.44, y + 0.44),
+        fill: luma(85%), stroke: black + 0.5pt)
+      content((x, y), [#n])
     }
-  }
-  let unit(x, y, n) = place(
-    dx: (x - 22) * s,
-    dy: (y - 22) * s,
-    rect(width: 44 * s, height: 44 * s, fill: luma(85%), stroke: black + 0.5pt,
-      align(center + horizon)[#n]),
-  )
-  box(width: 620 * s, height: 250 * s, {
-    seg((0, 120), (40, 120), (80, 60), (98, 60))
-    seg((40, 120), (80, 180), (98, 180))
-    seg((142, 60), (180, 60), (220, 120))
-    seg((142, 180), (180, 180), (220, 120))
-    seg((220, 120), (260, 60), (288, 60))
-    seg((220, 120), (260, 180), (288, 180))
-    seg((332, 60), (368, 60))
-    seg((332, 180), (368, 180))
-    seg((412, 60), (450, 60), (490, 120))
-    seg((412, 180), (450, 180), (490, 120))
-    seg((490, 120), (518, 120))
-    seg((562, 120), (610, 120))
-    unit(120, 60, 1)
-    unit(120, 180, 2)
-    unit(310, 60, 3)
-    unit(390, 60, 4)
-    unit(310, 180, 5)
-    unit(390, 180, 6)
-    unit(540, 120, 7)
+    set-style(stroke: st)
+    line((0, mid), (0.8, mid), (1.6, top), (1.96, top))
+    line((0.8, mid), (1.6, bot), (1.96, bot))
+    line((2.84, top), (3.6, top), (4.4, mid))
+    line((2.84, bot), (3.6, bot), (4.4, mid))
+    line((4.4, mid), (5.2, top), (5.76, top))
+    line((4.4, mid), (5.2, bot), (5.76, bot))
+    line((6.64, top), (7.36, top))
+    line((6.64, bot), (7.36, bot))
+    line((8.24, top), (9, top), (9.8, mid))
+    line((8.24, bot), (9, bot), (9.8, mid))
+    line((9.8, mid), (10.36, mid))
+    line((11.24, mid), (12.2, mid))
+    unit(2.4, top, 1)
+    unit(2.4, bot, 2)
+    unit(6.2, top, 3)
+    unit(7.8, top, 4)
+    unit(6.2, bot, 5)
+    unit(7.8, bot, 6)
+    unit(10.8, mid, 7)
   })
 }
 
@@ -329,41 +323,26 @@ $ mu^F ([0, p)) = integral_0^p f(x) dif x = integral_0^p dif x = p = PP(A). $
 
 Границы подотрезков -- это частичные суммы вероятностей, поэтому номер подотрезка, в который попало $u$, находится двоичным поиском (`numpy.searchsorted`).
 
-#let barchart(cats, sim, theo, ymax, ystep, labels) = {
-  let (w, h) = (9cm, 3.4cm)
-  let n = cats.len()
-  let slot = w / n
-  let bw = slot * 0.26
+#let barchart(data, labels) = {
   let simfill = if config.monochrome { luma(55%) } else { blue.lighten(45%) }
   let theofill = if config.monochrome { luma(85%) } else { orange.lighten(55%) }
-  let lbl(body) = text(size: 0.75em, body)
-  box(width: w + 1.4cm, height: h + 1.6cm, inset: (left: 1.1cm, top: 0.2cm), {
-    let k = 0
-    while k * ystep <= ymax {
-      let v = k * ystep
-      let y = h - h * v / ymax
-      place(line(
-        start: (0cm, y), end: (w, y),
-        stroke: if v == 0 { 0.6pt } else { luma(70%) + 0.3pt },
-      ))
-      place(dx: -1.1cm, dy: y - 0.9em, box(width: 1cm, align(right, lbl[#v])))
-      k += 1
-    }
-    place(line(start: (0cm, h), end: (0cm, -0.1cm), stroke: 0.6pt))
-    for i in range(n) {
-      let cx = slot * (i + 0.5)
-      let hs = h * sim.at(i) / ymax
-      let ht = h * theo.at(i) / ymax
-      place(dx: cx - bw, dy: h - hs, rect(width: bw, height: hs, fill: simfill, stroke: 0.4pt))
-      place(dx: cx, dy: h - ht, rect(width: bw, height: ht, fill: theofill, stroke: 0.4pt))
-      place(dx: cx - slot / 2, dy: h + 0.1cm, box(width: slot, align(center, lbl[#cats.at(i)])))
-    }
-    place(dy: h + 0.6cm, dx: 0.4cm, {
-      box(baseline: 0.1em, rect(width: 0.35cm, height: 0.25cm, fill: simfill, stroke: 0.4pt))
-      lbl[ #labels.at(0) #box(width: 0.4cm)]
-      box(baseline: 0.1em, rect(width: 0.35cm, height: 0.25cm, fill: theofill, stroke: 0.4pt))
-      lbl[ #labels.at(1)]
-    })
+
+  cetz.canvas({
+    chart.columnchart(
+      data,
+      mode: "clustered",
+      value-key: (1, 2),
+      size: (9, 3.4),
+      bar-width: 0.6,
+      bar-style: cetz.palette.new(
+        colors: (simfill, theofill),
+        base: (stroke: (paint: black, thickness: 0.4pt)),
+      ),
+      labels: labels,
+      legend: "south",
+      legend-style: (orientation: ltr, item: (spacing: 0.4), offset: (0, -0.6)),
+      y-min: 0, y-max: 200, y-tick-step: 50,
+    )
   })
 }
 
@@ -406,10 +385,7 @@ $ mu^F ([0, p)) = integral_0^p f(x) dif x = integral_0^p dif x = p = PP(A). $
   ))
 
   #align(center, barchart(
-    ($1$, $2$, $4$, $8$, $16$),
-    (30, 42, 185, 190, 53),
-    (25, 50, 175, 200, 50),
-    200, 50,
+    (($1$, 30, 25), ($2$, 42, 50), ($4$, 185, 175), ($8$, 190, 200), ($16$, 53, 50)),
     ([симуляция], [теория $500 dot cal(P)({x})$]),
   ))
 
@@ -424,29 +400,31 @@ $ mu^F ([0, p)) = integral_0^p f(x) dif x = integral_0^p dif x = p = PP(A). $
   При одном и том же seed он даёт в точности тот же результат, поскольку внутри устроен так же. Все стандартные распределения тоже уже реализованы в `numpy.random` -- см. `numpy.random.exponential`, `numpy.random.hypergeometric`, `numpy.random.multinomial` и т.д.
 ]
 
-#let histogram(data, x0, bin, ymax, xticks, mean) = {
-  let (w, hh) = (9.6cm, 3.2cm)
-  let n = data.len()
-  let bw = w / n
-  let fill = if config.monochrome { luma(60%) } else { blue.lighten(45%) }
+#let histogram(data, x0, bin, mean) = {
+  let bars-fill = if config.monochrome { luma(60%) } else { blue.lighten(45%) }
   let hot = if config.monochrome { luma(25%) } else { red }
-  let lbl(body) = text(size: 0.7em, body)
-  let xpos(v) = w * (v - x0) / (bin * n)
-  box(width: w + 0.8cm, height: hh + 1.1cm, inset: (top: 0.2cm, left: 0.4cm), {
-    for i in range(n) {
-      let hb = hh * data.at(i) / ymax
-      place(dx: bw * i, dy: hh - hb, rect(width: bw, height: hb, fill: fill, stroke: 0.2pt))
-    }
-    place(line(
-      start: (xpos(mean), -0.1cm), end: (xpos(mean), hh),
-      stroke: (paint: hot, thickness: 0.8pt, dash: "dashed"),
-    ))
-    place(dx: xpos(mean) + 0.1cm, dy: -0.2cm, text(size: 0.7em, fill: hot, $EE Z = 17 thin 600$))
-    place(line(start: (0cm, hh), end: (w, hh), stroke: 0.6pt))
-    for v in xticks {
-      place(line(start: (xpos(v), hh), end: (xpos(v), hh + 2pt), stroke: 0.6pt))
-      place(dx: xpos(v) - 0.7cm, dy: hh + 0.1cm, box(width: 1.4cm, align(center, lbl[#v])))
-    }
+  let bars = data.enumerate().map(((i, v)) => (x0 + bin * (i + 0.5), v))
+
+  cetz.canvas({
+    import cetz.draw: *
+    plot.plot(
+      size: (10, 3.2),
+      axis-style: "left",
+      x-label: none, y-label: none,
+      x-min: x0, x-max: x0 + bin * data.len(),
+      y-min: 0, y-max: 10000,
+      x-tick-step: 1000, y-tick-step: 2500,
+      x-format: v => text(size: 0.7em)[#calc.round(v)],
+      y-format: v => text(size: 0.7em)[#calc.round(v)],
+      {
+        plot.add-bar(bars, bar-width: bin, style: (fill: bars-fill, stroke: 0.2pt))
+        plot.annotate({
+          line((mean, 0), (mean, 9800), stroke: (paint: hot, thickness: 0.8pt, dash: "dashed"))
+          content((mean + 60, 9800), anchor: "south-west",
+            text(size: 0.7em, fill: hot, $EE Z = 17 thin 600$))
+        })
+      },
+    )
   })
 }
 
@@ -493,7 +471,7 @@ $ mu^F ([0, p)) = integral_0^p f(x) dif x = integral_0^p dif x = p = PP(A). $
     (22, 29, 68, 126, 285, 473, 800, 1229, 1912, 2696, 3737, 4960, 6174, 7359,
      8270, 8929, 9431, 8822, 8365, 6870, 5817, 4543, 3380, 2289, 1497, 872,
      511, 282, 136, 62, 28, 8, 2, 1),
-    16000, 100, 9600, (16000, 17000, 18000, 19000), 17600,
+    16000, 100, 17600,
   ))
 
   Оценка $1.0$ означает лишь, что вероятность противоположного события меньше примерно $3\/n = 0.00003$ (правило трёх), -- точное значение симуляцией не поймать. Зато его можно посчитать свёрткой: все цены кратны $50$, поэтому в единицах по $50$ евро цена принимает значения $2, 3, 4, 5, 6$, а нас интересует $PP(S >= 300)$ для суммы $80$ таких слагаемых.
@@ -521,45 +499,39 @@ $ mu^F ([0, p)) = integral_0^p f(x) dif x = integral_0^p dif x = p = PP(A). $
 === Связь с функцией распределения
 
 #let cdf-plot = {
-  let (w, hh) = (9.4cm, 4.6cm)
-  let (xmax, u) = (17, 0.6)
-  let steps = ((0, 0), (1, 0.05), (2, 0.15), (4, 0.5), (8, 0.9), (16, 1))
+  let steps = ((0, 0), (1, 0.05), (2, 0.15), (4, 0.5), (8, 0.9), (16, 1), (17.5, 1))
+  let dots = ((1, 0.05), (2, 0.15), (4, 0.5), (8, 0.9), (16, 1))
+  let u = 0.6
   let hot = if config.monochrome { luma(35%) } else { red }
-  let st = if config.monochrome { black + 1pt } else { blue + 1pt }
-  let lbl(body) = text(size: 0.75em, body)
-  let px(x) = w * x / xmax
-  let py(y) = hh - hh * y
-  box(width: w + 1.6cm, height: hh + 1.2cm, inset: (left: 1.1cm, top: 0.3cm), {
-    for i in range(steps.len()) {
-      let (x, y) = steps.at(i)
-      let xr = if i + 1 < steps.len() { steps.at(i + 1).at(0) } else { xmax }
-      place(line(start: (px(x), py(y)), end: (px(xr), py(y)), stroke: st))
-      if i + 1 < steps.len() {
-        place(line(
-          start: (px(xr), py(y)), end: (px(xr), py(steps.at(i + 1).at(1))),
-          stroke: (paint: luma(60%), thickness: 0.4pt, dash: "dashed"),
-        ))
-      }
-      if y > 0 {
-        place(dx: px(x) - 2pt, dy: py(y) - 2pt, circle(radius: 2pt, fill: if config.monochrome { black } else { blue }))
-        place(line(start: (0cm, py(y)), end: (px(x), py(y)), stroke: (paint: luma(80%), thickness: 0.3pt)))
-        place(dx: -1.1cm, dy: py(y) - 0.9em, box(width: 1cm, align(right, lbl[#y])))
-      }
-    }
-    place(line(start: (0cm, hh), end: (w + 0.4cm, hh), stroke: 0.6pt))
-    place(line(start: (0cm, hh), end: (0cm, -0.2cm), stroke: 0.6pt))
-    place(line(start: (0cm, py(u)), end: (px(8), py(u)), stroke: hot + 0.8pt))
-    place(line(
-      start: (px(8), py(u)), end: (px(8), hh),
-      stroke: (paint: hot, thickness: 0.8pt, dash: "dashed"),
-    ))
-    place(dx: -1.1cm, dy: py(u) - 0.9em, box(width: 1cm, align(right, text(size: 0.7em, fill: hot, $u$))))
-    for (x, _) in steps.slice(1) {
-      place(line(start: (px(x), hh - 2pt), end: (px(x), hh + 2pt), stroke: 0.6pt))
-      place(dx: px(x) - 0.5cm, dy: hh + 0.1cm, box(width: 1cm, align(center, lbl[#x])))
-    }
-    place(dx: w + 0.5cm, dy: hh - 0.3cm, lbl($x$))
-    place(dx: 0.15cm, dy: -0.35cm, lbl($F(x)$))
+  let st = if config.monochrome { black } else { blue }
+
+  cetz.canvas({
+    import cetz.draw: *
+    plot.plot(
+      size: (9, 4.2),
+      axis-style: "left",
+      x-label: $x$,
+      y-label: $F(x)$,
+      x-min: 0, x-max: 17.5,
+      y-min: 0, y-max: 1.05,
+      x-tick-step: none,
+      y-tick-step: none,
+      x-ticks: (1, 2, 4, 8, 16),
+      y-ticks: (0.05, 0.15, 0.5, 0.9, 1),
+      y-grid: true,
+      x-format: v => text(size: 0.75em)[#calc.round(v)],
+      y-format: v => text(size: 0.75em)[#v],
+      {
+        plot.add(steps, line: "hv", style: (stroke: st + 1pt))
+        plot.add(dots, style: (stroke: none), mark: "o", mark-size: 0.11,
+          mark-style: (fill: st, stroke: none))
+        plot.annotate({
+          line((0, u), (8, u), stroke: hot + 0.8pt)
+          line((8, u), (8, 0), stroke: (paint: hot, thickness: 0.8pt, dash: "dashed"))
+          content((0.25, u + 0.06), anchor: "west", text(size: 0.75em, fill: hot, $"   "u = 0.6$))
+        })
+      },
+    )
   })
 }
 

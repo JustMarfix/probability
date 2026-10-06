@@ -1,27 +1,23 @@
 #import "../../utils/core.typ": *
+#import "../../packages/cetz.typ": cetz
 
 == Семинар
 
 #let comp(n) = box(stroke: 0.5pt, inset: (x: 2pt), outset: (y: 2pt))[#n]
 
 #let circuit = {
-  let s = 0.02cm
-  let st = blue.lighten(30%) + 0.8pt
-  let seg(..pts) = {
-    let pts = pts.pos()
-    for i in range(pts.len() - 1) {
-      let (x1, y1) = pts.at(i)
-      let (x2, y2) = pts.at(i + 1)
-      place(line(start: (x1 * s, y1 * s), end: (x2 * s, y2 * s), stroke: st))
+  let st = if config.monochrome { luma(40%) + 0.8pt } else { blue.lighten(30%) + 0.8pt }
+  let P(x, y) = (x / 50, (270 - y) / 50)
+
+  cetz.canvas({
+    import cetz.draw: *
+    let seg(..pts) = line(..pts.pos().map(pt => P(..pt)), stroke: st)
+    let unit(x, y, n) = {
+      let (cx, cy) = P(x, y)
+      rect((cx - 0.44, cy - 0.44), (cx + 0.44, cy + 0.44),
+        fill: luma(85%), stroke: black + 0.5pt)
+      content((cx, cy), [#n])
     }
-  }
-  let unit(x, y, n) = place(
-    dx: (x - 22) * s,
-    dy: (y - 22) * s,
-    rect(width: 44 * s, height: 44 * s, fill: luma(85%), stroke: black + 0.5pt,
-      align(center + horizon)[#n]),
-  )
-  box(width: 600 * s, height: 270 * s, {
     seg((0, 145), (55, 145), (110, 67), (175, 67))
     seg((55, 145), (110, 223), (150, 223))
     seg((420, 67), (480, 67), (535, 145), (590, 145))

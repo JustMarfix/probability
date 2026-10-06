@@ -1,4 +1,5 @@
 #import "../../utils/core.typ": *
+#import "../../packages/cetz.typ": cetz, plot
 
 == Семинар
 
@@ -94,33 +95,32 @@
 #let rayleigh-plot(a, b) = {
   let theta = 100
   let f(x) = x / (theta * theta) * calc.exp(-x * x / (2 * theta * theta))
-  let (w, h) = (8cm, 2.6cm)
-  let (xmax, ymax) = (400, 0.007)
-  let px(x) = x / xmax * w
-  let py(y) = h - y / ymax * h
-  let graph(from, to, n) = range(n + 1).map(i => {
-    let x = from + (to - from) * i / n
-    (px(x), py(f(x)))
-  })
-  let pts = graph(0, xmax, 200)
-  let fill = if config.monochrome { luma(85%) } else { green.lighten(75%) }
+  let area = if config.monochrome { luma(85%) } else { green.lighten(75%) }
   let st = if config.monochrome { black + 1pt } else { blue + 1pt }
-  let lbl(body) = text(size: 0.8em, body)
 
-  box(width: w + 1.2cm, height: h + 0.9cm, inset: (top: 0.4cm), {
-    place(polygon(fill: fill, stroke: none, (px(a), py(0)), ..graph(a, b, 60), (px(b), py(0))))
-    for x in (a, b) {
-      place(line(start: (px(x), py(0)), end: (px(x), py(f(x))), stroke: (dash: "dashed", thickness: 0.5pt)))
-    }
-    place(curve(stroke: st, curve.move(pts.first()), ..pts.slice(1).map(p => curve.line(p))))
-    place(line(start: (0pt, h), end: (w + 0.4cm, h), stroke: 0.6pt))
-    place(line(start: (0pt, h), end: (0pt, -0.3cm), stroke: 0.6pt))
-    for x in (100, 200, 300, 400) {
-      place(line(start: (px(x), h - 2pt), end: (px(x), h + 2pt), stroke: 0.6pt))
-      place(dx: px(x) - 0.5cm, dy: h + 0.1cm, box(width: 1cm, align(center, lbl[#x])))
-    }
-    place(dx: w + 0.5cm, dy: h - 0.25cm, lbl($x$))
-    place(dx: 0.15cm, dy: -0.4cm, lbl($f_100 (x)$))
+  cetz.canvas({
+    import cetz.draw: *
+    plot.plot(
+      size: (9, 2.8),
+      axis-style: "school-book",
+      x-label: $x$,
+      y-label: none,
+      x-min: 0, x-max: 430,
+      y-min: 0, y-max: 0.0075,
+      x-tick-step: 100,
+      y-tick-step: none,
+      {
+        plot.add(domain: (a, b), f, samples: 80, fill: true,
+          style: (stroke: none, fill: area))
+        plot.add(domain: (0, 420), f, samples: 200, style: (stroke: st))
+        for x in (a, b) {
+          if x > 0 {
+            plot.add(((x, 0), (x, f(x))), style: (stroke: (dash: "dashed", thickness: 0.5pt)))
+          }
+        }
+      },
+    )
+    content((0.1, 2.9), anchor: "west", text(size: 0.8em, $f_100 (x)$))
   })
 }
 
