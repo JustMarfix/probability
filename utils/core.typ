@@ -268,6 +268,15 @@
   )
 )
 
+#let boxed(body) = box(
+  stroke: 0.6pt,
+  inset: (x: 4pt, y: 3pt),
+  {
+    set text(top-edge: "bounds", bottom-edge: "bounds")
+    $display(body)$
+  },
+)
+
 #let proof-left-to-the-reader = proof.with[Доказательство остается читателю в качестве упражнения. <todo-like> ]
 
 #import "shortcuts.typ": *
