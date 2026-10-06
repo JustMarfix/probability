@@ -87,6 +87,34 @@
   show "≥": "⩾"
   show "≤": "⩽"
 
+  show raw.where(block: true): it => align(center, block(
+    width: 85%,
+    radius: 4pt,
+    breakable: false,
+    fill: luma(235),
+    inset: (x: 10pt, y: 8pt),
+    align(left, {
+      let numbered = [
+        #show raw.line: l => context {
+          box(
+            width: measure([#it.lines.last().count]).width,
+            align(right, text(fill: luma(150), size: 9pt)[#l.number]),
+          )
+          h(8pt)
+          text(size: 9pt, l.body)
+        }
+        #it
+      ]
+
+      if config.monochrome [
+        #show text: set text(fill: black)
+        #numbered
+      ] else {
+        numbered
+      }
+    }),
+  ))
+
   [
     #clabel("start")
     #align(center + horizon)[
