@@ -16,6 +16,7 @@
 #include "sections/05-depend/!sec.typ"
 #include "sections/06-simulation/!sec.typ"
 #include "sections/07-random/!sec.typ"
+#include "sections/08-expectance/!sec.typ"
 
 #if config.appendix {
   include "appendix.typ"
