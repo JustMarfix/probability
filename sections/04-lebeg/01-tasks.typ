@@ -35,18 +35,18 @@
 
 #th(name: "Свойства мер")[
   #set enum(numbering: "(a)", full: true)
-  Верна следующая цепочка импликаций:
-  $() <=> (b) <=> (c) <=> (d)$.
+  Пусть $mu : cal(A) -> [0, +oo]$ конечно-аддитивна и $mu(emptyset) = 0$. Верна следующая цепочка импликаций:
+  $ "(a)" <=> "(b)" => "(c)" => "(d)". $
 
   + $mu$ является мерой на $cal(A)$;
 
-  + $mu$ *непрерывна снизу*, т.е. для всех множеств $A, A_n, in cal(A), n in NN$, с $A_n arrow.tr A$ выполнено $mu(A) = lim_(n -> infinity) mu (A_n)$;
+  + $mu$ *непрерывна снизу*, т.е. для всех множеств $A, A_n in cal(A), n in NN$, с $A_n arrow.tr A$ выполнено $mu(A) = lim_(n -> infinity) mu (A_n)$;
 
-  + $mu$ *непрерывна сверху*, т.е. для всех множеств $A, A_n, in cal(A), n in NN$, с $A_n arrow.br A$ и $mu (A_1) < infinity$ выполнено $mu(A) = lim_(n -> infinity) mu (A_n)$;
+  + $mu$ *непрерывна сверху*, т.е. для всех множеств $A, A_n in cal(A), n in NN$, с $A_n arrow.br A$ и $mu (A_1) < infinity$ выполнено $mu(A) = lim_(n -> infinity) mu (A_n)$;
 
-  + $mu$ *непрерывна в* $emptyset$, т.е. для всех множеств $A_n in cal(A), n in NN$ с $A_n arrow.br emptyset$ и $mu (A_1) < infinity$ выполнено $mu(A) = 0$;
+  + $mu$ *непрерывна в* $emptyset$, т.е. для всех множеств $A_n in cal(A), n in NN$ с $A_n arrow.br emptyset$ и $mu (A_1) < infinity$ выполнено $lim_(n -> infinity) mu (A_n) = 0$;
 
-  Если $mu (Omega) < infinity$, то выполнено также (b) $arrow.l.double$ (c).
+  Если $mu (Omega) < infinity$, то выполнено также (d) $=>$ (a), т.е. все четыре свойства равносильны.
 ]
 
 #task(name: "1")[

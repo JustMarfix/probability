@@ -6,3 +6,4 @@ typst.exe
 _site/
 .cache/
 .DS_store
+cheatsheet.*

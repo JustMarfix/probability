@@ -1,4 +1,4 @@
 #import "../../config.typ"
 
-= σ-алгебры
+= σ-алгебры, модуль 1
 #include "01-tasks.typ"
